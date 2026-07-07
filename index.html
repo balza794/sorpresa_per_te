@@ -1,150 +1,268 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorpresa per Te ❤️</title>
-    <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #ffe6e6; 
-            text-align: center; 
-            padding: 50px 20px; 
-            margin: 0;
-        }
-        .card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            display: inline-block; 
-            max-width: 500px; 
-            width: 100%;
-            box-sizing: border-box;
-            position: relative;
-        }
-        h1 { color: #ff4d4d; margin-top: 0; }
-        h2 { color: #333; }
-        p { color: #555; font-size: 16px; line-height: 1.5; }
-        
-        button { 
-            background-color: #ff4d4d; 
-            color: white; 
-            border: none; 
-            padding: 12px 25px; 
-            border-radius: 25px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            font-weight: bold;
-            transition: background 0.3s, transform 0.2s;
-            margin: 8px 0;
-            width: 100%;
-        }
-        button:hover { 
-            background-color: #ff1a1a; 
-            transform: scale(1.02);
-        }
-        button:disabled {
-            opacity: 0.6;
-            cursor: default;
-            transform: none;
-        }
-        .hidden { 
-            display: none !important; 
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorpresa per Te 🩷</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg-start: #ffeef6;
+        --bg-end: #ffd7e8;
+        --card-bg: #fffbfd;
+        --accent: #ff8fb3;
+        --accent-dark: #f2609a;
+        --accent-soft: #ffd3e4;
+        --accent-softer: #fff0f6;
+        --text-dark: #5c3a4d;
+        --text-muted: #a9788f;
+        --correct: #5cc8a0;
+        --correct-bg: #e4faf1;
+        --wrong: #ff8fa3;
+        --wrong-bg: #ffeef1;
+    }
 
-        /* Messaggio di Feedback (Esatto / Errore) dentro lo schermo */
-        #feedback {
-            margin-top: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            min-height: 27px;
-        }
-        .corretto { color: #2ecc71; }
-        .errore { color: #e74c3c; }
+    * { box-sizing: border-box; }
 
-        /* Opzioni corrette/sbagliate evidenziate dopo la risposta */
-        .opzione-corretta {
-            background-color: #2ecc71 !important;
-        }
-        .opzione-sbagliata {
-            background-color: #e74c3c !important;
-        }
+    body {
+        font-family: 'Nunito', sans-serif;
+        background: linear-gradient(160deg, var(--bg-start), var(--bg-end));
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 50px 20px;
+        position: relative;
+        overflow-x: hidden;
+    }
 
-        /* Punteggio finale */
-        #punteggio-finale {
-            font-size: 22px;
-            font-weight: bold;
-            color: #ff4d4d;
-            margin: 15px 0 5px 0;
-        }
+    /* Cuoricini fluttuanti di sottofondo */
+    .cuore-fluttuante {
+        position: fixed;
+        top: 100%;
+        font-size: 22px;
+        opacity: 0.55;
+        pointer-events: none;
+        animation: fluttua linear infinite;
+        z-index: 0;
+        filter: drop-shadow(0 2px 3px rgba(255,255,255,0.4));
+    }
 
-        /* Stili per le Slide dei Motivi */
-        .slide {
-            display: none;
-            text-align: center;
-        }
-        .slide.active {
-            display: block;
-        }
-        .numero-slide {
-            font-size: 14px;
-            color: #888;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .foto-motivo {
-            display: block;
-            max-width: 100%;
-            width: 100%;
-            height: auto; /* Risolve il problema del taglio delle foto */
-            max-height: 350px; /* Impedisce che foto verticali diventino giganti */
-            object-fit: contain; /* Mantiene la foto intera senza tagliarla o distorcerla */
-            border-radius: 10px; 
-            margin: 15px 0; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background-color: #fdfdfd; /* Sfondo neutro se la foto non riempie la card */
-        }
-        .testo-motivo {
-            font-size: 18px;
-            color: #333;
-            margin: 15px 0;
-            display: inline-block;
-        }
-    </style>
+    @keyframes fluttua {
+        0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+        10% { opacity: 0.6; }
+        90% { opacity: 0.5; }
+        100% { transform: translateY(-110vh) translateX(var(--drift, 30px)) rotate(20deg); opacity: 0; }
+    }
+
+    .card {
+        background: var(--card-bg);
+        padding: 40px 34px;
+        border-radius: 28px;
+        box-shadow: 0 10px 40px rgba(242, 96, 154, 0.18), 0 2px 8px rgba(242, 96, 154, 0.1);
+        display: inline-block;
+        max-width: 500px;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1;
+        border: 1px solid #ffe3ee;
+        animation: comparsa 0.6s ease;
+    }
+
+    @keyframes comparsa {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+        font-family: 'Fredoka', sans-serif;
+        color: var(--accent-dark);
+        margin-top: 0;
+        font-size: 28px;
+        letter-spacing: 0.2px;
+    }
+    h2 {
+        font-family: 'Fredoka', sans-serif;
+        color: var(--text-dark);
+        font-size: 20px;
+        font-weight: 600;
+    }
+    h3 { font-family: 'Fredoka', sans-serif; font-weight: 600; }
+    p { color: var(--text-muted); font-size: 16px; line-height: 1.6; }
+
+    .eyebrow {
+        font-family: 'Fredoka', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-size: 12px;
+        color: var(--accent-dark);
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    button {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        border: none;
+        padding: 13px 25px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        transition: filter 0.2s, transform 0.15s, box-shadow 0.2s;
+        margin: 8px 0;
+        width: 100%;
+        box-shadow: 0 4px 14px rgba(242, 96, 154, 0.35);
+    }
+    button:hover:not(:disabled) {
+        filter: brightness(1.05);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(242, 96, 154, 0.45);
+    }
+    button:active:not(:disabled) { transform: translateY(0); }
+    button:disabled {
+        opacity: 0.65;
+        cursor: default;
+        transform: none;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Barra di avanzamento del quiz */
+    #progresso-wrap {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 22px;
+    }
+    .puntino {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        transition: background 0.3s, transform 0.3s;
+    }
+    .puntino.fatto { background: var(--correct); }
+    .puntino.attuale { background: var(--accent-dark); transform: scale(1.35); }
+
+    #feedback {
+        margin-top: 15px;
+        font-size: 17px;
+        font-weight: 700;
+        min-height: 27px;
+        font-family: 'Fredoka', sans-serif;
+    }
+    .corretto { color: var(--correct); }
+    .errore { color: var(--wrong); }
+
+    .opzione-corretta { background: linear-gradient(135deg, var(--correct), #48b58c) !important; }
+    .opzione-sbagliata { background: linear-gradient(135deg, var(--wrong), #ff7391) !important; }
+
+    #punteggio-finale {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 21px;
+        font-weight: 600;
+        color: var(--accent-dark);
+        background: var(--accent-softer);
+        border-radius: 16px;
+        padding: 12px 16px;
+        margin: 6px 0 18px 0;
+        border: 1px dashed var(--accent-soft);
+    }
+
+    /* Slide dei motivi */
+    .slide { display: none; text-align: center; }
+    .slide.active { display: block; animation: comparsa 0.4s ease; }
+
+    .numero-slide {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 13px;
+        color: var(--accent-dark);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        background: var(--accent-softer);
+        display: inline-block;
+        padding: 4px 14px;
+        border-radius: 20px;
+    }
+
+    .foto-motivo {
+        display: block;
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+        max-height: 350px;
+        object-fit: contain;
+        border-radius: 16px;
+        margin: 16px 0;
+        box-shadow: 0 6px 18px rgba(242, 96, 154, 0.2);
+        background-color: var(--accent-softer);
+        border: 3px solid white;
+        outline: 1px solid var(--accent-soft);
+    }
+
+    .testo-motivo {
+        font-size: 18px;
+        color: var(--text-dark);
+        margin: 10px 0;
+        display: inline-block;
+        line-height: 1.5;
+    }
+
+    #messaggio-finale p {
+        font-family: 'Fredoka', sans-serif;
+        font-weight: 600;
+        font-size: 17px;
+        color: var(--accent-dark);
+        background: var(--accent-softer);
+        border-radius: 16px;
+        padding: 16px;
+        border: 1px dashed var(--accent-soft);
+    }
+</style>
 </head>
 <body>
 
     <div id="intro" class="card">
-        <h1>Ciao Amore! ❤️</h1>
+        <div class="eyebrow">Una cosa carina per te</div>
+        <h1>Ciao Amore! 🩷</h1>
         <p>Visto che hai un fidanzato nerd, ho pensato di scriverti un sito web tutto per te. Sei pronta a metterti alla prova con un piccolo quiz su di me e sulla nostra relazione?</p>
-        <button onclick="iniziaQuiz()">Inizia il Quiz!</button>
+        <button onclick="iniziaQuiz()">Inizia il Quiz! 🩷</button>
     </div>
 
     <div id="quiz-container" class="card hidden">
+        <div id="progresso-wrap"></div>
         <h2 id="domanda">Domanda qui</h2>
         <div id="opzioni"></div>
         <div id="feedback"></div>
     </div>
 
     <div id="premi" class="card hidden">
-        <h1>Quiz Completato!</h1>
+        <div class="eyebrow">Complimenti</div>
+        <h1>Quiz Completato! 🩷</h1>
         <div id="punteggio-finale"></div>
-        <h3 style="color: #666; margin-bottom: 20px;">Ecco i 10 motivi per cui ti amo:</h3>
-        
+        <h3 style="color: var(--text-muted); margin-bottom: 20px; font-size: 16px;">Ecco i 10 motivi per cui ti amo:</h3>
+
         <div id="slides-wrapper">
             <div class="slide active">
                 <div class="numero-slide">Motivo 1 di 10</div>
                 <strong class="testo-motivo">Perché mi supporti sempre, anche quando programmo di notte.</strong>
                 <img src="assets/gattino.jpg" alt="Noi insieme" class="foto-motivo">
             </div>
-            
+
             <div class="slide">
                 <div class="numero-slide">Motivo 2 di 10</div>
                 <strong class="testo-motivo">Perché amo vederti ridere anche se la mia battuta non fa ridere.</strong>
                 <img src="assets/gattinoLinguaccia.jpg" alt="Tu che ridi" class="foto-motivo">
             </div>
-            
+
             <div class="slide">
                 <div class="numero-slide">Motivo 3 di 10</div>
                 <strong class="testo-motivo">Perché insieme siamo la squadra perfetta, nello studio, nella vita e nelle serate!!!</strong>
@@ -197,17 +315,33 @@
                 <div class="numero-slide">Motivo Bonus</div>
                 <strong class="testo-motivo">Potrei andare avanti all'infinito ma ho scritto i 10 più importanti!!!</strong>
             </div>
-
         </div>
 
         <button id="btn-next" onclick="prossimaSlide()" style="margin-top: 20px;">Avanti  ➡️</button>
-        
+
         <div id="messaggio-finale" class="hidden" style="margin-top: 20px;">
-            <p style="font-weight: bold; font-size: 18px; color: #ff4d4d;">❤️ Buon lavoro per lo studio, spaccherai tutto a settembre! Io sono qui per te. Ti amo! ❤️</p>
+            <p>🩷 Buon lavoro per lo studio, spaccherai tutto a settembre! Io sono qui per te. Ti amo! 🩷</p>
         </div>
     </div>
 
     <script>
+        // Genera cuoricini rosa fluttuanti di sottofondo
+        (function generaCuoriDiSfondo() {
+            const numeroCuori = 14;
+            for (let i = 0; i < numeroCuori; i++) {
+                const cuore = document.createElement('div');
+                cuore.className = 'cuore-fluttuante';
+                cuore.textContent = '🩷';
+                cuore.style.left = Math.random() * 100 + 'vw';
+                cuore.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+                const durata = 10 + Math.random() * 10;
+                cuore.style.animationDuration = durata + 's';
+                cuore.style.animationDelay = (Math.random() * durata) + 's';
+                cuore.style.fontSize = (14 + Math.random() * 16) + 'px';
+                document.body.appendChild(cuore);
+            }
+        })();
+
         const domande = [
             { d: "Qual è la data del nostro anniversario?", o: ["12 Marzo", "22 Aprile", "20 Maggio"], a: 1 },
             { d: "Quanti prestigi ho su brawl?", o: ["100", "111", "112"], a: 2 },
@@ -220,7 +354,7 @@
             { d: "Qual è la cosa che odi fare con me?", o: ["Informatica", "Guardare un film", "Mangiare"], a: 0 },
             { d: "Qual è la cosa che amo di più di te?", o: ["Il tuo sorriso", "Il tuo carattere", "TUTTO!"], a: 2 }
         ];
-        
+
         let indiceCorrente = 0;
         let slideCorrente = 0;
         let punteggio = 0;
@@ -228,7 +362,27 @@
         function iniziaQuiz() {
             document.getElementById('intro').classList.add('hidden');
             document.getElementById('quiz-container').classList.remove('hidden');
+            generaPuntini();
             mostraDomanda();
+        }
+
+        function generaPuntini() {
+            const wrap = document.getElementById('progresso-wrap');
+            wrap.innerHTML = "";
+            domande.forEach(() => {
+                const p = document.createElement('div');
+                p.className = 'puntino';
+                wrap.appendChild(p);
+            });
+        }
+
+        function aggiornaPuntini() {
+            const puntini = document.querySelectorAll('.puntino');
+            puntini.forEach((p, i) => {
+                p.classList.remove('fatto', 'attuale');
+                if (i < indiceCorrente) p.classList.add('fatto');
+                else if (i === indiceCorrente) p.classList.add('attuale');
+            });
         }
 
         function mostraDomanda() {
@@ -236,19 +390,19 @@
                 document.getElementById('quiz-container').classList.add('hidden');
                 document.getElementById('premi').classList.remove('hidden');
                 document.getElementById('punteggio-finale').innerText =
-                    `Hai risposto correttamente a ${punteggio} domande su ${domande.length}! ❤️`;
+                    `Hai risposto correttamente a ${punteggio} domande su ${domande.length}! 🩷`;
                 return;
             }
-            
-            // Pulisce il feedback ad ogni nuova domanda
+
+            aggiornaPuntini();
             document.getElementById('feedback').innerText = "";
-            
+
             let q = domande[indiceCorrente];
             document.getElementById('domanda').innerText = `Domanda ${indiceCorrente + 1}: ${q.d}`;
-            
+
             let opzioniDiv = document.getElementById('opzioni');
             opzioniDiv.innerHTML = "";
-            
+
             q.o.forEach((opzione, index) => {
                 opzioniDiv.innerHTML += `<button onclick="controllaRisposta(${index}, this)">${opzione}</button>`;
             });
@@ -259,40 +413,33 @@
             let q = domande[indiceCorrente];
             let tuttiIBottoni = document.querySelectorAll('#opzioni button');
 
-            // Disabilita subito tutti i bottoni: una sola risposta possibile
             tuttiIBottoni.forEach(b => b.disabled = true);
 
             if (scelta === q.a) {
                 feedbackDiv.className = "corretto";
-                feedbackDiv.innerText = "Esatto!";
+                feedbackDiv.innerText = "Esatto! 🩷";
                 bottoneCliccato.classList.add('opzione-corretta');
                 punteggio++;
             } else {
                 feedbackDiv.className = "errore";
                 feedbackDiv.innerText = "Risposta sbagliata!";
                 bottoneCliccato.classList.add('opzione-sbagliata');
-                // Evidenzia anche qual era quella giusta
                 tuttiIBottoni[q.a].classList.add('opzione-corretta');
             }
 
             indiceCorrente++;
-
-            // Aspetta un secondo prima di mostrare la prossima domanda,
-            // così fa in tempo a leggere il feedback e vedere la risposta giusta
             setTimeout(mostraDomanda, 1200);
         }
 
-        // Gestione delle slide di PowerPoint dei motivi
         function prossimaSlide() {
             let slides = document.querySelectorAll('.slide');
             slides[slideCorrente].classList.remove('active');
-            
+
             slideCorrente++;
-            
+
             if (slideCorrente < slides.length) {
                 slides[slideCorrente].classList.add('active');
             } else {
-                // Se i motivi sono finiti mostra il pulsantone d'amore finale
                 document.getElementById('btn-next').classList.add('hidden');
                 document.getElementById('messaggio-finale').classList.remove('hidden');
             }
